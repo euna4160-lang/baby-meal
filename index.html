@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <title>🍼 이유식 식단표</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
@@ -17,7 +20,8 @@
   --shadow:0 2px 12px rgba(107,76,42,.12);
   --radius:14px;
 }
-html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+html{height:100%;height:-webkit-fill-available}
+body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
 
 /* ── HEADER ── */
 .hdr{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--brown);color:#fff;
@@ -43,7 +47,8 @@ html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;back
 
 /* ── PAGES ── */
 .page{position:fixed;top:52px;left:0;right:0;bottom:58px;overflow-y:auto;
-  -webkit-overflow-scrolling:touch;display:none;padding:12px 10px}
+  -webkit-overflow-scrolling:touch;display:none;padding:12px 10px;
+  overscroll-behavior:contain}
 .page.active{display:block}
 
 /* ── WEEK SELECTOR ── */
@@ -226,10 +231,61 @@ html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;back
   font-size:12px;opacity:0;pointer-events:none;transition:.3s;z-index:400;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── SAFE AREA (iPhone notch) ── */
+/* ── HEADER BABY PROFILE ── */
+.hdr-baby{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.hdr-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.6);
+  flex-shrink:0;background:rgba(255,255,255,.2);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+.hdr-avatar img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0}
+.hdr-baby-info{min-width:0}
+.hdr-baby-name{font-size:15px;font-weight:900;letter-spacing:-.3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-baby-age{font-size:10px;opacity:.75;margin-top:1px;white-space:nowrap}
+
+/* ── BABY PROFILE PAGE ── */
+.profile-hero{background:linear-gradient(160deg,var(--brown) 0%,var(--brown2) 100%);
+  border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:14px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  box-shadow:0 4px 20px rgba(107,76,42,.25)}
+.profile-avatar-wrap{position:relative;width:90px;height:90px}
+.profile-avatar{width:90px;height:90px;border-radius:50%;border:3px solid rgba(255,255,255,.7);
+  overflow:hidden;cursor:pointer;background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;font-size:40px}
+.profile-avatar img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block}
+.profile-avatar-edit{position:absolute;bottom:2px;right:2px;
+  width:26px;height:26px;border-radius:50%;background:var(--orange);
+  border:2px solid #fff;display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.profile-name-disp{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.profile-age-disp{font-size:13px;color:rgba(255,255,255,.8);margin-top:-4px}
+.profile-dday{background:rgba(255,255,255,.18);border-radius:20px;
+  padding:6px 16px;font-size:12px;color:#fff;font-weight:700}
+
+.profile-form-card{background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.pf-row{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.pf-row:last-child{margin-bottom:0}
+.pf-label{font-size:11px;font-weight:700;color:var(--brown2)}
+.pf-input{padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);width:100%}
+.pf-input:focus{outline:none;border-color:var(--orange)}
+.pf-save-btn{width:100%;padding:14px;background:var(--orange);color:#fff;
+  border:none;border-radius:12px;font-family:inherit;font-size:15px;
+  font-weight:700;cursor:pointer;margin-top:4px;transition:.2s}
+.pf-save-btn:active{background:#c05828}
+
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:14px 12px;text-align:center}
+.stat-num{font-size:22px;font-weight:900;color:var(--orange)}
+.stat-label{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* ── SAFE AREA (iPhone notch + 홈 인디케이터) ── */
 @supports(padding-bottom:env(safe-area-inset-bottom)){
+  .hdr{padding-top:env(safe-area-inset-top);height:calc(52px + env(safe-area-inset-top))}
+  .page{top:calc(52px + env(safe-area-inset-top));bottom:calc(58px + env(safe-area-inset-bottom))}
   .bnav{padding-bottom:env(safe-area-inset-bottom);height:calc(58px + env(safe-area-inset-bottom))}
-  .page{bottom:calc(58px + env(safe-area-inset-bottom))}
+  .toast{bottom:calc(70px + env(safe-area-inset-bottom))}
 }
 </style>
 </head>
@@ -237,8 +293,15 @@ html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;back
 
 <!-- HEADER -->
 <header class="hdr">
-  <div class="hdr-logo">🍼 이유식 식단표 <span id="hdrMonth">6개월</span></div>
-  <select class="month-sel" id="globalMonth" onchange="onMonthChange()">
+  <div class="hdr-baby" onclick="showPage('profile', document.querySelector('.bnav-btn[data-page=profile]'))">
+    <div class="hdr-avatar" id="hdrAvatar">👶</div>
+    <div class="hdr-baby-info">
+      <div class="hdr-baby-name" id="hdrBabyName">이유식 식단표</div>
+      <div class="hdr-baby-age" id="hdrBabyAge">👶 프로필을 설정해주세요</div>
+    </div>
+  </div>
+  <!-- 월령 select 제거 — 생년월일 기반 자동 계산 -->
+  <select id="globalMonth" style="display:none" onchange="onMonthChange()">
     <option value="4">4개월</option><option value="5">5개월</option>
     <option value="6" selected>6개월</option><option value="7">7개월</option>
     <option value="8">8개월</option><option value="9">9개월</option>
@@ -291,13 +354,57 @@ html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;back
   <div id="archiveList"></div>
 </div>
 
+<!-- BABY PROFILE PAGE -->
+<div class="page" id="page-profile">
+  <!-- Hero card -->
+  <div class="profile-hero" id="profileHero">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('photoInput').click()">👶</div>
+      <div class="profile-avatar-edit" onclick="document.getElementById('photoInput').click()">📷</div>
+    </div>
+    <div class="profile-name-disp" id="profileNameDisp">아기 이름</div>
+    <div class="profile-age-disp" id="profileAgeDisp">생일을 입력해주세요</div>
+    <div class="profile-dday" id="profileDday">🎂 D+0</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="profile-stats">
+    <div class="stat-card">
+      <div class="stat-num" id="statDays">0</div>
+      <div class="stat-label">태어난 지 (일)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statMonth">0개월</div>
+      <div class="stat-label">현재 월령</div>
+    </div>
+  </div>
+
+  <!-- Edit form -->
+  <div class="profile-form-card">
+    <div class="sec-title" style="margin-bottom:14px">✏️ 정보 수정</div>
+    <div class="pf-row">
+      <div class="pf-label">아기 이름</div>
+      <input class="pf-input" id="pfName" placeholder="예: 김하늘" maxlength="10">
+    </div>
+    <div class="pf-row">
+      <div class="pf-label">생년월일</div>
+      <input class="pf-input" id="pfBirth" type="date">
+    </div>
+    <button class="pf-save-btn" onclick="saveProfile()">💾 저장하기</button>
+  </div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bnav">
-  <button class="bnav-btn active" onclick="showPage('plan',this)"><span class="ico">📋</span>식단표</button>
-  <button class="bnav-btn" onclick="showPage('ing',this)"><span class="ico">🥕</span>재료</button>
-  <button class="bnav-btn" onclick="showPage('combo',this)"><span class="ico">🔗</span>궁합</button>
-  <button class="bnav-btn" onclick="showPage('amt',this)"><span class="ico">⚖️</span>섭취량</button>
-  <button class="bnav-btn" onclick="showPage('archive',this)"><span class="ico">📁</span>기록</button>
+  <button class="bnav-btn active" data-page="plan" onclick="showPage('plan',this)"><span class="ico">📋</span>식단표</button>
+  <button class="bnav-btn" data-page="ing" onclick="showPage('ing',this)"><span class="ico">🥕</span>재료</button>
+  <button class="bnav-btn" data-page="combo" onclick="showPage('combo',this)"><span class="ico">🔗</span>궁합</button>
+  <button class="bnav-btn" data-page="amt" onclick="showPage('amt',this)"><span class="ico">⚖️</span>섭취량</button>
+  <button class="bnav-btn" data-page="archive" onclick="showPage('archive',this)"><span class="ico">📁</span>기록</button>
+  <button class="bnav-btn" data-page="profile" onclick="showPage('profile',this)"><span class="ico">👶</span>아기</button>
 </nav>
 
 <!-- MODAL -->
@@ -353,8 +460,106 @@ function defaultState(){
       snack:['쌀과자','고구마퓨레','바나나퓨레','두부과자','요거트'],
     },
     combos: {
-      good:[['소고기','브로콜리'],['연어','감자'],['닭고기','당근'],['두부','시금치']],
-      bad:[['소고기','고구마'],['두부','시금치'],['꿀','우유']],
+      good:[
+        // 육류
+        ['소고기','브로콜리'],['소고기','비타민'],['소고기','청경채'],['소고기','시금치'],['소고기','애호박'],
+        ['소고기','양배추'],['소고기','무'],['소고기','두부'],['소고기','당근'],['소고기','표고버섯'],
+        ['소고기','팽이버섯'],['소고기','아욱'],['소고기','양파'],['소고기','콩나물'],['소고기','키위'],
+        ['소고기','파인애플'],['소고기','배'],['소고기','참기름'],
+        ['닭고기','브로콜리'],['닭고기','비타민'],['닭고기','시금치'],['닭고기','청경채'],['닭고기','비트'],
+        ['닭고기','부추'],['닭고기','당근'],['닭고기','표고버섯'],['닭고기','팽이버섯'],['닭고기','콩나물'],
+        ['닭고기','단호박'],['닭고기','고구마'],['닭고기','인삼'],['닭고기','대추'],['닭고기','녹두'],
+        ['닭고기','구기자'],['닭고기','밤'],['닭고기','키위'],['닭고기','양파'],
+        ['돼지고기','새우젓'],['돼지고기','무'],['돼지고기','양파'],['돼지고기','마늘'],['돼지고기','부추'],
+        ['돼지고기','깻잎'],['돼지고기','표고버섯'],['돼지고기','마늘종'],['돼지고기','전복'],['돼지고기','사과'],
+        ['돼지고기','김치'],
+        // 생선·해산물
+        ['흰살생선','완두콩'],['흰살생선','브로콜리'],['흰살생선','양배추'],['흰살생선','두부'],
+        ['흰살생선','당근'],['흰살생선','양파'],
+        ['연어','양파'],['연어','파프리카'],['연어','멸치'],
+        ['멸치','연어'],['멸치','표고버섯'],['멸치','우유'],['멸치','계란노른자'],
+        ['새우','애호박'],['새우','완두콩'],['새우','표고버섯'],['새우','아욱'],
+        ['게살','부추'],['게살','양파'],['게살','오이'],['게살','파프리카'],['게살','브로콜리'],
+        ['미역','두부'],['미역','콩'],
+        // 채소
+        ['시금치','소고기'],['시금치','닭고기'],['시금치','당근'],['시금치','양파'],['시금치','바나나'],
+        ['시금치','사과'],['시금치','계란'],['시금치','참깨'],['시금치','두부'],['시금치','우유'],['시금치','조개'],
+        ['브로콜리','소고기'],['브로콜리','닭고기'],['브로콜리','계란'],['브로콜리','양파'],['브로콜리','고구마'],
+        ['브로콜리','치즈'],['브로콜리','아몬드'],['브로콜리','호두'],['브로콜리','게'],
+        ['애호박','소고기'],['애호박','감자'],['애호박','계란'],['애호박','새우'],
+        ['양배추','애호박'],['양배추','완두콩'],['양배추','표고버섯'],['양배추','아욱'],
+        ['배추','무'],['배추','두부'],
+        ['당근','소고기'],['당근','닭고기'],['당근','흰살생선'],['당근','양파'],['당근','고구마'],
+        ['당근','시금치'],['당근','계란'],
+        ['양파','돼지고기'],['양파','흰살생선'],['양파','연어'],['양파','콩나물'],['양파','당근'],['양파','호박'],
+        ['양파','양배추'],['양파','시금치'],['양파','사과'],['양파','오미자'],['양파','치즈'],
+        ['오이','소고기'],['오이','계란'],
+        ['고구마','닭고기'],['고구마','돼지고기'],['고구마','브로콜리'],['고구마','양배추'],['고구마','비트'],
+        ['고구마','감자'],['고구마','당근'],['고구마','사과'],['고구마','밤'],['고구마','우유'],
+        ['감자','돼지고기'],['감자','고구마'],['감자','양송이버섯'],['감자','에호박'],['감자','마'],
+        ['감자','치즈'],['감자','우유'],
+        ['단호박','닭고기'],['단호박','현미'],['단호박','계란'],['단호박','양파'],['단호박','팥'],
+        ['토마토','닭고기'],['토마토','감자'],['토마토','브로콜리'],['토마토','에호박'],['토마토','두부'],
+        ['토마토','계란노른자'],
+        // 유제품·기타
+        ['계란','애호박'],['계란','시금치'],['계란','청경채'],['계란','미역'],['계란','피망'],
+        ['계란','당근'],['계란','단호박'],['계란','오이'],
+        ['우유','시금치'],['우유','양배추'],['우유','감자'],['우유','고구마'],['우유','단호박'],
+        ['우유','양파'],['우유','옥수수'],['우유','토마토'],['우유','딸기'],
+        ['두부','흰살생선'],['두부','미역'],['두부','김'],['두부','비타민'],
+        ['치즈','브로콜리'],['치즈','양파'],['치즈','감자'],['치즈','단호박'],
+        ['콩','다시마'],['콩','미역'],
+        // 과일
+        ['사과','고구마'],['사과','쌀'],['사과','배'],['사과','당근'],
+        ['바나나','아보카도'],['바나나','고구마'],['바나나','귀리'],
+        ['배','쌀'],['배','감자'],['배','브로콜리'],
+        ['블루베리','바나나'],['블루베리','귀리'],['블루베리','두부'],
+        ['딸기','바나나'],['딸기','사과'],['딸기','귀리'],
+        ['복숭아','쌀'],['복숭아','당근'],['복숭아','고구마'],
+        ['자두','쌀'],['자두','배'],['자두','고구마'],
+        ['망고','쌀'],['망고','바나나'],['망고','닭고기'],
+        ['수박','쌀'],['수박','배'],['수박','당근'],
+        ['감귤류','쌀'],['감귤류','바나나'],['감귤류','당근'],
+        ['키위','바나나'],['키위','배'],['키위','고구마'],
+        ['아보카도','바나나'],['아보카도','감자'],['아보카도','달걀노른자'],
+      ],
+      bad:[
+        // 육류
+        ['소고기','고구마'],['소고기','부추'],['소고기','밤'],
+        ['닭고기','자두'],['닭고기','검은깨'],['닭고기','미나리'],
+        ['돼지고기','버터'],['돼지고기','도라지'],
+        // 생선·해산물
+        ['멸치','시금치'],['멸치','아욱'],
+        ['게살','감'],
+        ['미역','파'],
+        // 채소
+        ['시금치','두부'],['시금치','근대'],['시금치','멸치'],['시금치','토마토'],
+        ['당근','양배추'],['당근','오이'],['당근','무'],
+        ['오이','무'],['오이','당근'],['오이','땅콩'],
+        ['고구마','소고기'],['고구마','땅콩'],['고구마','감'],
+        ['감자','흰살생선'],['감자','자몽'],['감자','사과'],['감자','파인애플'],['감자','바나나'],
+        ['단호박','무'],
+        ['토마토','감귤류'],['토마토','우유'],['토마토','치즈'],['토마토','시금치'],
+        // 유제품·기타
+        ['계란','시금치'],['계란','콩'],['계란','두부'],['계란','김'],['계란','설탕'],
+        ['우유','설탕'],['우유','땅콩'],
+        ['두부','시금치'],['두부','꿀'],['두부','파'],
+        ['치즈','콩류'],
+        ['콩','치즈'],['콩','바나나'],
+        // 과일
+        ['사과','감귤류'],['사과','우유'],
+        ['바나나','감귤류'],['바나나','생토마토'],
+        ['배','유제품'],['배','시금치'],
+        ['블루베리','감귤류'],['블루베리','우유'],
+        ['딸기','우유'],['딸기','시금치'],
+        ['복숭아','유제품'],['복숭아','시금치'],
+        ['자두','감귤류'],['자두','우유'],
+        ['망고','유제품'],['망고','시금치'],
+        ['수박','감귤류'],['수박','우유'],
+        ['감귤류','우유'],['감귤류','시금치'],['감귤류','토마토'],
+        ['키위','감귤류'],['키위','유제품'],
+        ['아보카도','감귤류'],['아보카도','우유'],
+      ],
     },
     amounts: {
       4:{carb:20,protein:10,veg:10,fruit:20,snack:0},
@@ -368,13 +573,18 @@ function defaultState(){
       12:{carb:100,protein:50,veg:50,fruit:100,snack:45},
     },
     archive: [], // [{weekKey, label, dateRange, data:{...cells copy}}]
+    baby: { name:'', birth:'', photo:'' },
   };
 }
 
 function loadState(){
   try {
     const raw = localStorage.getItem('babyMeal_v2');
-    if(raw) return JSON.parse(raw);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(!parsed.baby) parsed.baby = {name:'',birth:'',photo:''};
+      return parsed;
+    }
   } catch(e){}
   return defaultState();
 }
@@ -492,6 +702,7 @@ function showPage(id, btn){
   if(id==='combo') renderCombos();
   if(id==='amt') renderAmounts();
   if(id==='archive') renderArchive();
+  if(id==='profile') renderProfile();
 }
 
 // ═══════════════════════════════════════════
@@ -505,7 +716,7 @@ function shiftWeek(dir){
 
 function onMonthChange(){
   S.month = parseInt(document.getElementById('globalMonth').value);
-  document.getElementById('hdrMonth').textContent = S.month+'개월';
+  updateHeader();
   scheduleSave();
   renderPlan();
 }
@@ -573,9 +784,17 @@ function buildDayCard(dateObj){
   if(isToday(dateObj)) hdrCls += ' today';
   hdr.className = hdrCls;
   hdr.innerHTML = `<span class="dow">${dow}</span><span class="date-str">${dateStr(dateObj)}</span>`;
+
+  // 전날과 동일 버튼
+  const copyBtn = document.createElement('button');
+  copyBtn.style.cssText = 'margin-left:auto;background:rgba(255,255,255,.20);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:10px;cursor:pointer;font-family:inherit;white-space:nowrap';
+  copyBtn.textContent = '📋 전날복사';
+  copyBtn.onclick = ()=>copyPrevDay(dateObj);
+  hdr.appendChild(copyBtn);
+
   if(isSunday(dateObj)){
     const archBtn = document.createElement('button');
-    archBtn.style.cssText = 'margin-left:auto;background:rgba(255,255,255,.25);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:10px;cursor:pointer;font-family:inherit';
+    archBtn.style.cssText = 'background:rgba(255,255,255,.25);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:10px;cursor:pointer;font-family:inherit;margin-left:4px';
     archBtn.textContent = '💾 저장';
     archBtn.onclick = ()=>archiveWeekOf(dateObj);
     hdr.appendChild(archBtn);
@@ -614,6 +833,49 @@ function buildDayCard(dateObj){
   });
 
   return card;
+}
+
+// ═══════════════════════════════════════════
+// COPY PREV DAY
+// ═══════════════════════════════════════════
+function copyPrevDay(dateObj){
+  const prev = new Date(dateObj);
+  prev.setDate(prev.getDate()-1);
+  const prevStr = dateStr(prev);
+  const todayStr = dateStr(dateObj);
+
+  // 전날에 데이터가 있는지 확인
+  const hasPrev = MEAL_ROWS.some(row=>
+    row.subs.some(sub=>(S.cells[`${prevStr}|${row.id}|${sub}`]||[]).length>0)
+  );
+  if(!hasPrev){
+    showToast('⚠️ 전날 식단이 없습니다');
+    return;
+  }
+
+  // 오늘에 이미 데이터가 있으면 확인
+  const hasToday = MEAL_ROWS.some(row=>
+    row.subs.some(sub=>(S.cells[`${todayStr}|${row.id}|${sub}`]||[]).length>0)
+  );
+  if(hasToday && !confirm('오늘 식단을 전날과 동일하게 덮어쓰시겠습니까?')) return;
+
+  // 복사
+  MEAL_ROWS.forEach(row=>{
+    row.subs.forEach(sub=>{
+      const prevKey = `${prevStr}|${row.id}|${sub}`;
+      const todayKey = `${todayStr}|${row.id}|${sub}`;
+      const src = S.cells[prevKey];
+      if(src && src.length){
+        S.cells[todayKey] = src.map(i=>({...i})); // deep copy
+      } else {
+        delete S.cells[todayKey];
+      }
+    });
+  });
+
+  scheduleSave();
+  renderPlan();
+  showToast('📋 전날 식단 복사 완료!');
 }
 
 function buildTags(wrap, dateObj, mealId, sub){
@@ -993,10 +1255,142 @@ function showToast(msg){
 }
 
 // ═══════════════════════════════════════════
+// BABY PROFILE
+// ═══════════════════════════════════════════
+function calcAge(birthStr){
+  if(!birthStr) return null;
+  const birth = new Date(birthStr); birth.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffMs = today - birth;
+  if(diffMs < 0) return null;
+  const totalDays = Math.floor(diffMs / 86400000);
+
+  // 만 개월 수 (생일 기준 정확 계산)
+  let months = (today.getFullYear() - birth.getFullYear()) * 12
+             + (today.getMonth() - birth.getMonth());
+  if(today.getDate() < birth.getDate()) months--;
+  if(months < 0) months = 0;
+
+  // 남은 일수 (해당 월 일수 기준)
+  const tempDate = new Date(birth);
+  tempDate.setMonth(tempDate.getMonth() + months);
+  const remainDays = Math.floor((today - tempDate) / 86400000);
+
+  // 몇 개월차 = 만 개월 + 1 (1일이라도 지나면 다음 달차)
+  const monthTurn = months + 1;
+
+  return { totalDays, months, days: Math.max(0, remainDays), monthTurn };
+}
+
+function ageText(age){
+  if(!age) return '생일을 입력해주세요';
+  return `${age.months}개월 ${age.days}일 (${age.monthTurn}개월차)`;
+}
+
+// 생년월일 기반으로 S.month 자동 갱신 (4~12 범위 클램프)
+function syncMonthFromAge(){
+  const age = calcAge(S.baby.birth);
+  if(!age) return;
+  const clamped = Math.min(12, Math.max(4, age.monthTurn));
+  S.month = clamped;
+  const sel = document.getElementById('globalMonth');
+  if(sel) sel.value = clamped;
+}
+
+function renderProfile(){
+  const b = S.baby;
+  document.getElementById('pfName').value = b.name || '';
+  document.getElementById('pfBirth').value = b.birth || '';
+
+  const age = calcAge(b.birth);
+  const displayName = b.name || '우리 아기';
+
+  document.getElementById('profileNameDisp').textContent = displayName;
+  document.getElementById('profileAgeDisp').textContent = ageText(age);
+  document.getElementById('profileDday').textContent = age ? `🎂 D+${age.totalDays}` : '🎂 D+?';
+  document.getElementById('statDays').textContent = age ? age.totalDays : '—';
+  document.getElementById('statMonth').textContent = age ? `${age.monthTurn}개월차` : '—';
+
+  setAvatarEl('profileAvatar', b.photo, '👶', true);
+}
+
+function saveProfile(){
+  S.baby.name  = document.getElementById('pfName').value.trim();
+  S.baby.birth = document.getElementById('pfBirth').value;
+  syncMonthFromAge();
+  scheduleSave();
+  renderProfile();
+  updateHeader();
+  showToast('💾 프로필 저장 완료!');
+}
+
+function handlePhotoUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  // canvas로 리사이즈 + 원형 클리핑 없이 정사각형 크롭 후 저장
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    const SIZE = 300;
+    const canvas = document.createElement('canvas');
+    canvas.width = SIZE; canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+    // 중앙 정사각형 크롭
+    const s = Math.min(img.width, img.height);
+    const sx = (img.width - s) / 2;
+    const sy = (img.height - s) / 2;
+    ctx.drawImage(img, sx, sy, s, s, 0, 0, SIZE, SIZE);
+    URL.revokeObjectURL(url);
+    S.baby.photo = canvas.toDataURL('image/jpeg', 0.85);
+    scheduleSave();
+    renderProfile();
+    updateHeader();
+    showToast('📷 사진 저장 완료!');
+  };
+  img.src = url;
+  e.target.value = '';
+}
+
+// 공통 아바타 렌더 헬퍼
+function setAvatarEl(id, photo, fallback, large){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(photo){
+    const size = large ? '90px' : '34px';
+    el.innerHTML = `<img src="${photo}" alt="아기사진"
+      style="width:${size};height:${size};border-radius:50%;object-fit:cover;display:block;">`;
+    el.style.background = 'transparent';
+    el.style.fontSize = '0';
+  } else {
+    el.innerHTML = fallback;
+    el.style.background = '';
+    el.style.fontSize = '';
+  }
+}
+
+function updateHeader(){
+  const b = S.baby;
+  const age = calcAge(b.birth);
+  const displayName = b.name ? `${b.name}의 이유식` : '이유식 식단표';
+
+  document.getElementById('hdrBabyName').textContent = displayName;
+
+  if(age){
+    document.getElementById('hdrBabyAge').textContent =
+      `${age.months}개월 ${age.days}일 · ${age.monthTurn}개월차`;
+  } else {
+    document.getElementById('hdrBabyAge').textContent = '👶 프로필을 설정해주세요';
+  }
+
+  setAvatarEl('hdrAvatar', b.photo, '👶', false);
+}
+
+// ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
+syncMonthFromAge();
 document.getElementById('globalMonth').value = S.month;
-document.getElementById('hdrMonth').textContent = S.month+'개월';
+updateHeader();
 checkAutoArchive();
 renderPlan();
 </script>
