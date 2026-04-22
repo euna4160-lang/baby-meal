@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🍼 이유식 식단표</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fdf9f4;--white:#ffffff;--card:#ffffff;
+  --brown:#6b4c2a;--brown2:#8b6340;--orange:#e07840;--orange2:#f0a060;
+  --green:#4a7c5a;--green2:#6aac7a;
+  --red:#c0392b;--red-bg:#fdecea;--red-border:#e57373;
+  --tag:#e8ddd0;--tag-text:#5a4030;
+  --border:#e8ddd0;--text:#3a2e22;--text2:#8a7a6a;
+  --shadow:0 2px 12px rgba(107,76,42,.12);
+  --radius:14px;
+}
+html,body{height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+
+/* ── HEADER ── */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--brown);color:#fff;
+  display:flex;align-items:center;padding:0 14px;height:52px;gap:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.hdr-logo{font-size:17px;font-weight:900;letter-spacing:-.5px;flex:1}
+.hdr-logo span{font-size:12px;font-weight:400;opacity:.7;margin-left:4px}
+.hdr-btn{background:rgba(255,255,255,.18);border:none;color:#fff;
+  padding:5px 11px;border-radius:20px;font-size:11px;font-family:inherit;
+  cursor:pointer;white-space:nowrap;transition:.2s}
+.hdr-btn.active{background:var(--orange2);font-weight:700}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--white);border-top:1.5px solid var(--border);
+  display:flex;height:58px;box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;border:none;background:transparent;
+  cursor:pointer;color:var(--text2);font-family:inherit;font-size:10px;transition:.2s}
+.bnav-btn .ico{font-size:20px;transition:.2s}
+.bnav-btn.active{color:var(--orange)}
+.bnav-btn.active .ico{transform:scale(1.15)}
+
+/* ── PAGES ── */
+.page{position:fixed;top:52px;left:0;right:0;bottom:58px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;display:none;padding:12px 10px}
+.page.active{display:block}
+
+/* ── WEEK SELECTOR ── */
+.week-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  background:var(--white);border-radius:var(--radius);padding:10px 12px;
+  box-shadow:var(--shadow)}
+.week-arrow{background:none;border:1.5px solid var(--border);border-radius:8px;
+  width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--brown);
+  display:flex;align-items:center;justify-content:center}
+.week-info{flex:1;text-align:center}
+.week-label{font-size:13px;font-weight:700;color:var(--brown)}
+.week-sub{font-size:10px;color:var(--text2);margin-top:1px}
+.month-sel{padding:5px 8px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:inherit;font-size:12px;color:var(--text);background:var(--bg);cursor:pointer}
+
+/* ── MEAL TOGGLE PILLS ── */
+.meal-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:0 2px}
+.meal-pill{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--white);font-size:11px;font-family:inherit;color:var(--text2);
+  cursor:pointer;transition:.2s}
+.meal-pill.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:700}
+
+/* ── DAY CARDS ── */
+.day-card{background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.day-card-hdr{background:var(--brown);color:#fff;padding:8px 14px;
+  display:flex;align-items:center;gap:8px}
+.day-card-hdr .dow{font-weight:900;font-size:15px}
+.day-card-hdr .date-str{font-size:11px;opacity:.8}
+.day-card-hdr.sat{background:#4a6080}
+.day-card-hdr.sun{background:#804040}
+.day-card-hdr.today{background:var(--orange)}
+
+.meal-section{border-bottom:1px solid var(--border)}
+.meal-section:last-child{border-bottom:none}
+.meal-section-hdr{padding:8px 12px 4px;font-size:11px;font-weight:700;
+  color:var(--brown2);display:flex;align-items:center;gap:4px}
+.sub-rows{padding:0 12px 8px}
+.sub-row{display:flex;align-items:flex-start;gap:6px;padding:3px 0}
+.sub-label{font-size:10px;color:var(--text2);min-width:42px;padding-top:3px;font-weight:500}
+.tags-wrap{flex:1;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+
+/* ── INGREDIENT TAGS ── */
+.ing-tag{display:inline-flex;align-items:center;gap:3px;
+  padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;
+  background:var(--tag);color:var(--tag-text);border:1.5px solid var(--border);
+  transition:.2s;cursor:default}
+.ing-tag.bad{background:var(--red-bg)!important;color:var(--red)!important;
+  border-color:var(--red-border)!important;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.ing-tag .rm{font-size:10px;cursor:pointer;opacity:.5;margin-left:1px}
+.ing-tag .rm:hover{opacity:1}
+.amt-badge{font-size:9px;background:rgba(0,0,0,.1);border-radius:4px;padding:0 3px}
+
+.add-tag-btn{display:inline-flex;align-items:center;gap:2px;
+  padding:3px 8px;border-radius:20px;border:1.5px dashed var(--orange2);
+  background:none;color:var(--orange);font-size:11px;cursor:pointer;
+  font-family:inherit;transition:.2s}
+.add-tag-btn:active{background:rgba(224,120,64,.1)}
+
+/* ── RECOMMEND STRIP ── */
+.rec-strip{margin:0 10px 10px;background:linear-gradient(135deg,#fff8f0,#fdeede);
+  border:1.5px solid var(--orange2);border-radius:var(--radius);padding:10px 12px}
+.rec-strip-title{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;
+  display:flex;align-items:center;gap:4px}
+.rec-chips{display:flex;flex-wrap:wrap;gap:5px}
+.rec-chip{padding:4px 10px;border-radius:20px;background:var(--orange2);
+  color:#fff;font-size:11px;font-weight:500;cursor:pointer;transition:.2s}
+.rec-chip:active{opacity:.7}
+
+/* ── WARN BANNER ── */
+.warn-banner{margin:0 10px 8px;background:var(--red-bg);border:1.5px solid var(--red-border);
+  border-radius:10px;padding:8px 12px;font-size:11px;color:var(--red);display:none}
+.warn-banner.show{display:block}
+
+/* ── MODAL ── */
+.modal{display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:var(--white);border-radius:20px 20px 0 0;
+  width:100%;max-height:85vh;overflow-y:auto;padding:20px 16px 32px;
+  animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;
+  margin:0 auto 16px}
+.modal-title{font-size:16px;font-weight:700;color:var(--brown);margin-bottom:14px}
+.modal-label{font-size:11px;color:var(--text2);margin-bottom:4px;margin-top:10px}
+.modal-select,.modal-input,.modal-num{width:100%;padding:10px 12px;
+  border:1.5px solid var(--border);border-radius:10px;font-family:inherit;
+  font-size:13px;color:var(--text);background:var(--bg)}
+.modal-select:focus,.modal-input:focus,.modal-num:focus{outline:none;border-color:var(--orange)}
+.modal-num{width:100px}
+.modal-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.m-btn{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer;
+  font-family:inherit;font-size:14px;font-weight:700;transition:.2s}
+.m-btn.ok{background:var(--orange);color:#fff}
+.m-btn.ok:active{background:#c05828}
+.m-btn.cancel{background:var(--border);color:var(--text2)}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-size:14px;font-weight:700;color:var(--brown);
+  border-bottom:2px solid var(--orange2);padding-bottom:6px;margin-bottom:12px;
+  display:flex;align-items:center;gap:6px}
+
+/* ── INGREDIENT MASTER ── */
+.ing-cat-card{background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.ing-cat-hdr{background:var(--brown2);color:#fff;padding:8px 14px;
+  font-size:13px;font-weight:700}
+.ing-cat-body{padding:10px 12px}
+.ing-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ing-item{display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:20px;background:var(--tag);
+  color:var(--tag-text);font-size:12px;border:1.5px solid var(--border)}
+.ing-item .del{font-size:11px;cursor:pointer;opacity:.5}
+.ing-item .del:hover{opacity:1;color:var(--red)}
+.ing-add-row{display:flex;gap:6px}
+.ing-add-input{flex:1;padding:7px 10px;border:1.5px solid var(--border);
+  border-radius:8px;font-family:inherit;font-size:12px}
+.ing-add-input:focus{outline:none;border-color:var(--orange)}
+.ing-add-ok{padding:7px 14px;background:var(--orange);color:#fff;
+  border:none;border-radius:8px;font-family:inherit;font-size:12px;
+  font-weight:700;cursor:pointer}
+
+/* ── COMBO PAGE ── */
+.combo-card{background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.combo-card-hdr{padding:8px 14px;font-size:13px;font-weight:700;color:#fff}
+.combo-card.good .combo-card-hdr{background:var(--green)}
+.combo-card.bad .combo-card-hdr{background:var(--red)}
+.combo-body{padding:10px 12px}
+.combo-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.combo-item{display:flex;align-items:center;justify-content:space-between;
+  padding:6px 10px;border-radius:8px;font-size:12px}
+.combo-card.good .combo-item{background:#e8f4ec;color:var(--green)}
+.combo-card.bad .combo-item{background:var(--red-bg);color:var(--red)}
+.combo-del{background:none;border:none;cursor:pointer;font-size:14px;opacity:.5}
+.combo-del:hover{opacity:1}
+.combo-add-row{display:flex;gap:6px}
+.combo-inp{flex:1;padding:7px 8px;border:1.5px solid var(--border);
+  border-radius:8px;font-family:inherit;font-size:12px;min-width:0}
+.combo-inp:focus{outline:none;border-color:var(--orange)}
+.combo-ok{padding:7px 12px;border:none;border-radius:8px;
+  font-family:inherit;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
+.combo-card.good .combo-ok{background:var(--green)}
+.combo-card.bad .combo-ok{background:var(--red)}
+
+/* ── AMOUNT PAGE ── */
+.amt-table-wrap{overflow-x:auto;border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:12px}
+.amt-table{width:100%;border-collapse:collapse;background:var(--white);min-width:400px}
+.amt-table th{background:var(--brown);color:#fff;padding:8px 6px;
+  text-align:center;font-size:11px;font-weight:700}
+.amt-table td{border:1px solid var(--border);padding:6px;
+  text-align:center;font-size:11px}
+.amt-table tr:nth-child(even) td{background:#faf6f0}
+.amt-inp{border:none;background:transparent;text-align:center;
+  font-family:inherit;font-size:11px;width:50px;color:var(--text);
+  border-bottom:1px dashed var(--border)}
+.amt-inp:focus{outline:none;border-bottom-color:var(--orange)}
+
+/* ── ARCHIVE PAGE ── */
+.archive-card{background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.archive-hdr{background:var(--brown2);color:#fff;padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between}
+.archive-hdr .wk-label{font-weight:700;font-size:13px}
+.archive-hdr .wk-date{font-size:10px;opacity:.8}
+.archive-body{padding:10px 12px;font-size:11px;color:var(--text2);max-height:120px;
+  overflow:hidden;position:relative}
+.archive-body.open{max-height:none}
+.archive-expand{text-align:center;padding:6px;font-size:11px;color:var(--orange);
+  cursor:pointer;border-top:1px solid var(--border);background:var(--white)}
+.archive-empty{text-align:center;color:var(--text2);padding:40px 20px;font-size:13px}
+
+/* ── AUTO SAVE TOAST ── */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--brown);color:#fff;padding:8px 18px;border-radius:20px;
+  font-size:12px;opacity:0;pointer-events:none;transition:.3s;z-index:400;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SAFE AREA (iPhone notch) ── */
+@supports(padding-bottom:env(safe-area-inset-bottom)){
+  .bnav{padding-bottom:env(safe-area-inset-bottom);height:calc(58px + env(safe-area-inset-bottom))}
+  .page{bottom:calc(58px + env(safe-area-inset-bottom))}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">🍼 이유식 식단표 <span id="hdrMonth">6개월</span></div>
+  <select class="month-sel" id="globalMonth" onchange="onMonthChange()">
+    <option value="4">4개월</option><option value="5">5개월</option>
+    <option value="6" selected>6개월</option><option value="7">7개월</option>
+    <option value="8">8개월</option><option value="9">9개월</option>
+    <option value="10">10개월</option><option value="11">11개월</option>
+    <option value="12">12개월</option>
+  </select>
+</header>
+
+<!-- PAGES -->
+<div class="page active" id="page-plan">
+  <!-- week bar -->
+  <div class="week-bar">
+    <button class="week-arrow" onclick="shiftWeek(-1)">‹</button>
+    <div class="week-info">
+      <div class="week-label" id="weekLabel">—</div>
+      <div class="week-sub" id="weekSub">이번 주</div>
+    </div>
+    <button class="week-arrow" onclick="shiftWeek(1)">›</button>
+  </div>
+  <!-- meal pills -->
+  <div class="meal-pills" id="mealPills"></div>
+  <!-- warn banner -->
+  <div class="warn-banner" id="warnBanner"></div>
+  <!-- recommend strip -->
+  <div class="rec-strip" id="recStrip" style="display:none">
+    <div class="rec-strip-title">✨ 추천 조합 (탭해서 빠른 추가)</div>
+    <div class="rec-chips" id="recChips"></div>
+  </div>
+  <!-- day cards -->
+  <div id="dayCards"></div>
+</div>
+
+<div class="page" id="page-ing">
+  <div class="sec-title">🥕 재료 목록 관리</div>
+  <div id="ingMaster"></div>
+</div>
+
+<div class="page" id="page-combo">
+  <div class="sec-title">🔗 재료 궁합 관리</div>
+  <div id="comboMaster"></div>
+</div>
+
+<div class="page" id="page-amt">
+  <div class="sec-title">⚖️ 월령별 권장 섭취량(g)</div>
+  <div class="amt-table-wrap"><table class="amt-table" id="amtTable"></table></div>
+</div>
+
+<div class="page" id="page-archive">
+  <div class="sec-title">📁 주간 식단 기록</div>
+  <div id="archiveList"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-btn active" onclick="showPage('plan',this)"><span class="ico">📋</span>식단표</button>
+  <button class="bnav-btn" onclick="showPage('ing',this)"><span class="ico">🥕</span>재료</button>
+  <button class="bnav-btn" onclick="showPage('combo',this)"><span class="ico">🔗</span>궁합</button>
+  <button class="bnav-btn" onclick="showPage('amt',this)"><span class="ico">⚖️</span>섭취량</button>
+  <button class="bnav-btn" onclick="showPage('archive',this)"><span class="ico">📁</span>기록</button>
+</nav>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">재료 추가</div>
+    <div class="modal-label">목록에서 선택</div>
+    <select class="modal-select" id="modalSel"></select>
+    <div class="modal-label">직접 입력 (선택 시 무시)</div>
+    <input class="modal-input" id="modalCustom" placeholder="재료명 입력">
+    <div class="modal-label">섭취량 (g)</div>
+    <div class="modal-row">
+      <input class="modal-num" type="number" id="modalAmt" min="1" max="300" placeholder="g">
+    </div>
+    <div class="modal-btns">
+      <button class="m-btn cancel" onclick="closeModal()">취소</button>
+      <button class="m-btn ok" onclick="confirmModal()">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ 자동 저장됨</div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const DAYS_KO = ['월','화','수','목','금','토','일'];
+const MEAL_ROWS = [
+  {id:'morning',label:'아침',icon:'🌅',subs:['carb','protein','veg']},
+  {id:'lunch',  label:'점심',icon:'☀️',subs:['carb','protein','veg']},
+  {id:'dinner', label:'저녁',icon:'🌙',subs:['carb','protein','veg']},
+  {id:'fruit',  label:'과일',icon:'🍎',subs:['fruit']},
+  {id:'snack',  label:'간식',icon:'🍘',subs:['snack']},
+];
+const SUB_LABELS = {carb:'탄수화물',protein:'단백질',veg:'채소',fruit:'과일',snack:'간식'};
+
+let S = loadState();
+
+function defaultState(){
+  return {
+    month: 6,
+    weekOffset: 0, // 0 = current week starting Mon
+    activeMeals: {morning:true,lunch:true,dinner:true,fruit:true,snack:true},
+    cells: {},      // key: "YYYY-MM-DD|mealId|sub" => [{name,amount}]
+    ingredients: {
+      carb:['백미','흑미','현미','귀리','찹쌀','기장쌀','렌틸콩','완두콩'],
+      protein:['소고기','돼지고기','닭고기','연어','참치','두부','계란'],
+      veg:['브로콜리','당근','애호박','시금치','감자','고구마','양파','무'],
+      fruit:['사과','바나나','배','딸기','블루베리','아보카도','수박'],
+      snack:['쌀과자','고구마퓨레','바나나퓨레','두부과자','요거트'],
+    },
+    combos: {
+      good:[['소고기','브로콜리'],['연어','감자'],['닭고기','당근'],['두부','시금치']],
+      bad:[['소고기','고구마'],['두부','시금치'],['꿀','우유']],
+    },
+    amounts: {
+      4:{carb:20,protein:10,veg:10,fruit:20,snack:0},
+      5:{carb:30,protein:15,veg:15,fruit:30,snack:10},
+      6:{carb:40,protein:20,veg:20,fruit:40,snack:15},
+      7:{carb:50,protein:25,veg:25,fruit:50,snack:20},
+      8:{carb:60,protein:30,veg:30,fruit:60,snack:25},
+      9:{carb:70,protein:35,veg:35,fruit:70,snack:30},
+      10:{carb:80,protein:40,veg:40,fruit:80,snack:35},
+      11:{carb:90,protein:45,veg:45,fruit:90,snack:40},
+      12:{carb:100,protein:50,veg:50,fruit:100,snack:45},
+    },
+    archive: [], // [{weekKey, label, dateRange, data:{...cells copy}}]
+  };
+}
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem('babyMeal_v2');
+    if(raw) return JSON.parse(raw);
+  } catch(e){}
+  return defaultState();
+}
+
+let saveTimer = null;
+function save(){
+  try { localStorage.setItem('babyMeal_v2', JSON.stringify(S)); } catch(e){}
+  showToast('✅ 자동 저장됨');
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 800);
+}
+
+// ═══════════════════════════════════════════
+// DATE HELPERS
+// ═══════════════════════════════════════════
+function getMondayOfWeek(offset){
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const diff = (day === 0) ? -6 : 1 - day;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() + diff + offset * 7);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+
+function dateStr(d){ // YYYY-MM-DD
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function fmtDate(d){
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+function isToday(d){
+  const t = new Date(); t.setHours(0,0,0,0);
+  return d.getTime() === t.getTime();
+}
+function isSunday(d){ return d.getDay() === 0; }
+function isSaturday(d){ return d.getDay() === 6; }
+
+// 1-week date array starting from Monday
+function getTwoWeekDates(){
+  const mon = getMondayOfWeek(S.weekOffset);
+  const dates = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(mon);
+    d.setDate(mon.getDate()+i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function cellKey(dateObj, mealId, sub){
+  return `${dateStr(dateObj)}|${mealId}|${sub}`;
+}
+
+function getCell(dateObj, mealId, sub){
+  const k = cellKey(dateObj, mealId, sub);
+  if(!S.cells[k]) S.cells[k] = [];
+  return S.cells[k];
+}
+
+// ═══════════════════════════════════════════
+// BAD COMBO CHECK  ← 끼니 전체 재료를 합산해서 비교
+// ═══════════════════════════════════════════
+function badSet(){
+  return S.combos.bad.map(p => p.map(x=>x.toLowerCase()).sort().join('§'));
+}
+
+// 해당 날짜의 특정 끼니(mealId) 전체 재료 이름 목록 반환
+function getAllMealNames(dateObj, mealId){
+  const row = MEAL_ROWS.find(r=>r.id===mealId);
+  if(!row) return [];
+  const names = [];
+  row.subs.forEach(sub=>{
+    getCell(dateObj, mealId, sub).forEach(i=>names.push(i.name));
+  });
+  return names;
+}
+
+// name 이 같은 끼니의 다른 재료들과 나쁜 궁합인지 확인
+function isBad(name, allMealNames){
+  const bs = badSet();
+  const ln = name.toLowerCase();
+  for(const other of allMealNames){
+    if(other===name) continue;
+    const key = [ln, other.toLowerCase()].sort().join('§');
+    if(bs.includes(key)) return true;
+  }
+  return false;
+}
+
+// 날짜 카드의 경고 배너용: 끼니별로 나쁜 재료 수집
+function getDayBadPairs(dateObj){
+  const pairs = [];
+  for(const row of MEAL_ROWS){
+    const allNames = getAllMealNames(dateObj, row.id);
+    allNames.forEach(n=>{
+      if(isBad(n, allNames)) pairs.push({day:dateStr(dateObj),meal:row.label,name:n});
+    });
+  }
+  return pairs;
+}
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='plan') renderPlan();
+  if(id==='ing') renderIngMaster();
+  if(id==='combo') renderCombos();
+  if(id==='amt') renderAmounts();
+  if(id==='archive') renderArchive();
+}
+
+// ═══════════════════════════════════════════
+// PLAN PAGE
+// ═══════════════════════════════════════════
+function shiftWeek(dir){
+  S.weekOffset += dir;
+  scheduleSave();
+  renderPlan();
+}
+
+function onMonthChange(){
+  S.month = parseInt(document.getElementById('globalMonth').value);
+  document.getElementById('hdrMonth').textContent = S.month+'개월';
+  scheduleSave();
+  renderPlan();
+}
+
+function renderPlan(){
+  const dates = getTwoWeekDates();
+  const mon1 = dates[0], sun1 = dates[6];
+  document.getElementById('weekLabel').textContent =
+    `${fmtDate(mon1)} ~ ${fmtDate(sun1)}`;
+  document.getElementById('weekSub').textContent =
+    `${mon1.getFullYear()}년 ${mon1.getMonth()+1}월`;
+
+  // meal pills
+  const pillsEl = document.getElementById('mealPills');
+  pillsEl.innerHTML = '';
+  MEAL_ROWS.forEach(row=>{
+    const btn = document.createElement('button');
+    btn.className = 'meal-pill' + (S.activeMeals[row.id]?' on':'');
+    btn.textContent = row.icon+' '+row.label;
+    btn.onclick = ()=>{
+      S.activeMeals[row.id] = !S.activeMeals[row.id];
+      btn.classList.toggle('on');
+      scheduleSave();
+      renderPlan();
+    };
+    pillsEl.appendChild(btn);
+  });
+
+  // warn banner
+  refreshWarnBanner();
+
+  // recommend strip
+  renderRecStrip();
+
+  // day cards
+  const container = document.getElementById('dayCards');
+  container.innerHTML = '';
+  dates.forEach(d => container.appendChild(buildDayCard(d)));
+}
+
+function renderRecStrip(){
+  const strip = document.getElementById('recStrip');
+  const chips = document.getElementById('recChips');
+  if(!S.combos.good.length){ strip.style.display='none'; return; }
+  strip.style.display='block';
+  chips.innerHTML = '';
+  S.combos.good.slice(0,8).forEach(pair=>{
+    const ch = document.createElement('div');
+    ch.className = 'rec-chip';
+    ch.textContent = pair.join(' + ');
+    ch.title = '탭해서 식단에 추가';
+    chips.appendChild(ch);
+  });
+}
+
+function buildDayCard(dateObj){
+  const card = document.createElement('div');
+  card.className = 'day-card';
+
+  const hdr = document.createElement('div');
+  const dow = DAYS_KO[(dateObj.getDay()+6)%7];
+  let hdrCls = 'day-card-hdr';
+  if(isSaturday(dateObj)) hdrCls += ' sat';
+  else if(isSunday(dateObj)) hdrCls += ' sun';
+  if(isToday(dateObj)) hdrCls += ' today';
+  hdr.className = hdrCls;
+  hdr.innerHTML = `<span class="dow">${dow}</span><span class="date-str">${dateStr(dateObj)}</span>`;
+  if(isSunday(dateObj)){
+    const archBtn = document.createElement('button');
+    archBtn.style.cssText = 'margin-left:auto;background:rgba(255,255,255,.25);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:10px;cursor:pointer;font-family:inherit';
+    archBtn.textContent = '💾 저장';
+    archBtn.onclick = ()=>archiveWeekOf(dateObj);
+    hdr.appendChild(archBtn);
+  }
+  card.appendChild(hdr);
+
+  MEAL_ROWS.forEach(row=>{
+    if(!S.activeMeals[row.id]) return;
+    const sec = document.createElement('div');
+    sec.className = 'meal-section';
+    const secHdr = document.createElement('div');
+    secHdr.className = 'meal-section-hdr';
+    secHdr.textContent = row.icon+' '+row.label;
+    sec.appendChild(secHdr);
+
+    const subRows = document.createElement('div');
+    subRows.className = 'sub-rows';
+    row.subs.forEach(sub=>{
+      const sr = document.createElement('div');
+      sr.className = 'sub-row';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'sub-label';
+      lbl.textContent = SUB_LABELS[sub];
+      sr.appendChild(lbl);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'tags-wrap';
+      wrap.id = `tags-${dateStr(dateObj)}-${row.id}-${sub}`;
+      buildTags(wrap, dateObj, row.id, sub);
+      sr.appendChild(wrap);
+      subRows.appendChild(sr);
+    });
+    sec.appendChild(subRows);
+    card.appendChild(sec);
+  });
+
+  return card;
+}
+
+function buildTags(wrap, dateObj, mealId, sub){
+  wrap.innerHTML = '';
+  const items = getCell(dateObj, mealId, sub);
+  // ★ 같은 끼니 전체 재료를 수집해서 cross-sub 비교
+  const allMealNames = getAllMealNames(dateObj, mealId);
+
+  items.forEach((item,idx)=>{
+    const tag = document.createElement('span');
+    const bad = isBad(item.name, allMealNames);
+    tag.className = 'ing-tag' + (bad ? ' bad':'');
+    if(bad) tag.title = '⚠️ 궁합 주의';
+    const defAmt = S.amounts[S.month]?.[sub] || '';
+    const dispAmt = item.amount || defAmt;
+    tag.innerHTML = item.name
+      + (dispAmt ? `<span class="amt-badge">${dispAmt}g</span>`:'')
+      + `<span class="rm" onclick="removeIngInPlace(event,'${dateStr(dateObj)}','${mealId}','${sub}',${idx})">×</span>`;
+    wrap.appendChild(tag);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-tag-btn';
+  addBtn.textContent = '+ 추가';
+  addBtn.onclick = ()=>openModal(dateObj, mealId, sub);
+  wrap.appendChild(addBtn);
+}
+
+// ★ 재료 삭제: 해당 끼니의 모든 sub tags만 새로고침 (스크롤 유지)
+function removeIngInPlace(e, dStr, mealId, sub, idx){
+  e.stopPropagation();
+  const k = `${dStr}|${mealId}|${sub}`;
+  if(!S.cells[k]) return;
+  S.cells[k].splice(idx,1);
+  scheduleSave();
+  refreshMealTags(dStr, mealId);
+  refreshWarnBanner();
+}
+
+// 특정 끼니의 모든 sub 태그 영역만 재렌더 (DOM 최소 갱신)
+function refreshMealTags(dStr, mealId){
+  const d = new Date(dStr);
+  const row = MEAL_ROWS.find(r=>r.id===mealId);
+  if(!row) return;
+  row.subs.forEach(sub=>{
+    const wrapId = `tags-${dStr}-${mealId}-${sub}`;
+    const wrap = document.getElementById(wrapId);
+    if(wrap) buildTags(wrap, d, mealId, sub);
+  });
+}
+
+// 경고 배너만 갱신
+function refreshWarnBanner(){
+  const dates = getTwoWeekDates();
+  const warnEl = document.getElementById('warnBanner');
+  const allBad = [];
+  dates.forEach(d => getDayBadPairs(d).forEach(p=>allBad.push(p)));
+  if(allBad.length){
+    const msgs = [...new Set(allBad.map(p=>`⚠️ ${p.day.slice(5)} ${p.meal}: "${p.name}"`))];
+    warnEl.innerHTML = msgs.join('<br>');
+    warnEl.classList.add('show');
+  } else {
+    warnEl.classList.remove('show');
+  }
+}
+
+// (removeIng replaced by removeIngInPlace)
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+let mCtx = null;
+function openModal(dateObj, mealId, sub){
+  mCtx = {dateObj, mealId, sub};
+  const row = MEAL_ROWS.find(r=>r.id===mealId);
+  document.getElementById('modalTitle').textContent =
+    `${DAYS_KO[(dateObj.getDay()+6)%7]}요일 ${fmtDate(dateObj)} — ${row.label} ${SUB_LABELS[sub]}`;
+
+  const sel = document.getElementById('modalSel');
+  sel.innerHTML = '<option value="">— 목록에서 선택 —</option>';
+  S.ingredients[sub].forEach(n=>{
+    const o = document.createElement('option');
+    o.value=n; o.textContent=n; sel.appendChild(o);
+  });
+
+  document.getElementById('modalCustom').value = '';
+  const defAmt = S.amounts[S.month]?.[sub] || '';
+  document.getElementById('modalAmt').value = defAmt;
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+  mCtx = null;
+}
+
+function confirmModal(){
+  if(!mCtx) return;
+  const sel = document.getElementById('modalSel').value;
+  const custom = document.getElementById('modalCustom').value.trim();
+  const name = sel || custom;
+  if(!name){ alert('재료를 선택하거나 입력하세요.'); return; }
+  const amount = parseInt(document.getElementById('modalAmt').value)||null;
+
+  const k = cellKey(mCtx.dateObj, mCtx.mealId, mCtx.sub);
+  if(!S.cells[k]) S.cells[k]=[];
+  S.cells[k].push({name, amount});
+
+  if(custom && !S.ingredients[mCtx.sub].includes(custom)){
+    S.ingredients[mCtx.sub].push(custom);
+  }
+
+  const savedCtx = {...mCtx};
+  closeModal();
+  scheduleSave();
+
+  // ★ 전체 재렌더 대신 해당 끼니의 모든 sub 태그만 즉시 갱신
+  refreshMealTags(dateStr(savedCtx.dateObj), savedCtx.mealId);
+  refreshWarnBanner();
+  renderRecStrip();
+}
+
+// tap outside modal
+document.getElementById('modal').addEventListener('click', e=>{
+  if(e.target===document.getElementById('modal')) closeModal();
+});
+
+// ═══════════════════════════════════════════
+// ARCHIVE
+// ═══════════════════════════════════════════
+function archiveWeekOf(sundayDate){
+  // find Monday of that week
+  const mon = new Date(sundayDate);
+  mon.setDate(sundayDate.getDate()-6);
+  const weekKey = dateStr(mon);
+
+  // already archived?
+  if(S.archive.find(a=>a.weekKey===weekKey)){
+    if(!confirm('이 주의 식단이 이미 저장되어 있습니다. 덮어쓰시겠습니까?')) return;
+    S.archive = S.archive.filter(a=>a.weekKey!==weekKey);
+  }
+
+  // collect cells for that week
+  const data = {};
+  for(let i=0;i<7;i++){
+    const d = new Date(mon); d.setDate(mon.getDate()+i);
+    MEAL_ROWS.forEach(row=>{
+      row.subs.forEach(sub=>{
+        const k = `${dateStr(d)}|${row.id}|${sub}`;
+        if(S.cells[k]?.length) data[k] = [...S.cells[k]];
+      });
+    });
+  }
+
+  S.archive.unshift({
+    weekKey,
+    label: `${mon.getMonth()+1}/${mon.getDate()} ~ ${sundayDate.getMonth()+1}/${sundayDate.getDate()}`,
+    savedAt: new Date().toISOString(),
+    data,
+  });
+
+  scheduleSave();
+  showToast('💾 주간 식단 저장 완료!');
+}
+
+// auto-archive check every time plan renders (Sunday)
+function checkAutoArchive(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  if(today.getDay()!==0) return; // only on Sunday
+  const dates = getTwoWeekDates();
+  const sunday = dates.find(d=>isSunday(d)&&d.getTime()===today.getTime());
+  if(!sunday) return;
+  const mon = new Date(sunday); mon.setDate(sunday.getDate()-6);
+  const weekKey = dateStr(mon);
+  if(!S.archive.find(a=>a.weekKey===weekKey)){
+    archiveWeekOf(sunday);
+  }
+}
+
+function renderArchive(){
+  const el = document.getElementById('archiveList');
+  el.innerHTML = '';
+  if(!S.archive.length){
+    el.innerHTML = '<div class="archive-empty">📭 저장된 주간 식단이 없습니다.<br>매주 일요일에 자동 또는 수동으로 저장됩니다.</div>';
+    return;
+  }
+  S.archive.forEach((rec,ai)=>{
+    const card = document.createElement('div');
+    card.className = 'archive-card';
+    card.innerHTML = `<div class="archive-hdr">
+      <div><div class="wk-label">📅 ${rec.label} 주간 식단</div>
+      <div class="wk-date">저장: ${rec.savedAt?rec.savedAt.slice(0,10):''}</div></div>
+      <button onclick="deleteArchive(${ai})" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:11px;cursor:pointer">삭제</button>
+    </div>`;
+
+    const body = document.createElement('div');
+    body.className = 'archive-body';
+    const lines = [];
+    Object.keys(rec.data).forEach(k=>{
+      const parts = k.split('|');
+      const row = MEAL_ROWS.find(r=>r.id===parts[1]);
+      if(!row) return;
+      const items = rec.data[k];
+      if(!items.length) return;
+      lines.push(`${parts[0].slice(5)} ${row.label}: ${items.map(i=>i.name).join(', ')}`);
+    });
+    body.innerHTML = lines.length ? lines.map(l=>`<div>${l}</div>`).join('') : '식단 내용 없음';
+    card.appendChild(body);
+
+    const exp = document.createElement('div');
+    exp.className = 'archive-expand';
+    exp.textContent = '▼ 전체 보기';
+    exp.onclick = ()=>{
+      body.classList.toggle('open');
+      exp.textContent = body.classList.contains('open') ? '▲ 접기' : '▼ 전체 보기';
+    };
+    card.appendChild(exp);
+    el.appendChild(card);
+  });
+}
+
+function deleteArchive(idx){
+  if(!confirm('이 기록을 삭제하시겠습니까?')) return;
+  S.archive.splice(idx,1);
+  scheduleSave();
+  renderArchive();
+}
+
+// ═══════════════════════════════════════════
+// INGREDIENT MASTER
+// ═══════════════════════════════════════════
+const ING_CATS = [
+  {key:'carb',label:'🌾 탄수화물'},{key:'protein',label:'🥩 단백질'},
+  {key:'veg',label:'🥦 채소'},{key:'fruit',label:'🍎 과일'},{key:'snack',label:'🍘 간식'},
+];
+
+function renderIngMaster(){
+  const el = document.getElementById('ingMaster');
+  el.innerHTML = '';
+  ING_CATS.forEach(cat=>{
+    const card = document.createElement('div');
+    card.className = 'ing-cat-card';
+    card.innerHTML = `<div class="ing-cat-hdr">${cat.label}</div>`;
+    const body = document.createElement('div');
+    body.className = 'ing-cat-body';
+
+    const list = document.createElement('div');
+    list.className = 'ing-list';
+    S.ingredients[cat.key].forEach((name,idx)=>{
+      const item = document.createElement('span');
+      item.className = 'ing-item';
+      item.innerHTML = `${name}<span class="del" onclick="delIng('${cat.key}',${idx})">×</span>`;
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+
+    const addRow = document.createElement('div');
+    addRow.className = 'ing-add-row';
+    const inp = document.createElement('input');
+    inp.className = 'ing-add-input';
+    inp.placeholder = '재료 추가...';
+    inp.type = 'text';
+    const ok = document.createElement('button');
+    ok.className = 'ing-add-ok';
+    ok.textContent = '추가';
+    ok.onclick = ()=>{
+      const v = inp.value.trim();
+      if(!v) return;
+      if(!S.ingredients[cat.key].includes(v)) S.ingredients[cat.key].push(v);
+      inp.value='';
+      scheduleSave();
+      renderIngMaster();
+      renderRecStrip();
+    };
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') ok.click(); });
+    addRow.appendChild(inp); addRow.appendChild(ok);
+    body.appendChild(addRow);
+    card.appendChild(body);
+    el.appendChild(card);
+  });
+}
+
+function delIng(cat, idx){
+  S.ingredients[cat].splice(idx,1);
+  scheduleSave();
+  renderIngMaster();
+}
+
+// ═══════════════════════════════════════════
+// COMBO MASTER
+// ═══════════════════════════════════════════
+function renderCombos(){
+  const el = document.getElementById('comboMaster');
+  el.innerHTML = '';
+  const cfgs = [
+    {key:'good',cls:'good',label:'✅ 좋은 궁합'},
+    {key:'bad', cls:'bad', label:'⚠️ 안 좋은 궁합'},
+  ];
+  cfgs.forEach(cfg=>{
+    const card = document.createElement('div');
+    card.className = 'combo-card '+cfg.cls;
+    card.innerHTML = `<div class="combo-card-hdr">${cfg.label}</div>`;
+    const body = document.createElement('div');
+    body.className = 'combo-body';
+
+    const list = document.createElement('div');
+    list.className = 'combo-list';
+    S.combos[cfg.key].forEach((pair,idx)=>{
+      const item = document.createElement('div');
+      item.className = 'combo-item';
+      item.innerHTML = `<span>${pair.join(' + ')}</span>`;
+      const del = document.createElement('button');
+      del.className = 'combo-del';
+      del.textContent = '×';
+      del.onclick = ()=>{ S.combos[cfg.key].splice(idx,1); scheduleSave(); renderCombos(); renderPlan(); };
+      item.appendChild(del);
+      list.appendChild(item);
+    });
+    body.appendChild(list);
+
+    const addRow = document.createElement('div');
+    addRow.className = 'combo-add-row';
+    const i1 = document.createElement('input');
+    i1.className='combo-inp'; i1.placeholder='재료 A';
+    const i2 = document.createElement('input');
+    i2.className='combo-inp'; i2.placeholder='재료 B';
+    const ok = document.createElement('button');
+    ok.className='combo-ok'; ok.textContent='등록';
+    ok.onclick = ()=>{
+      const a=i1.value.trim(),b=i2.value.trim();
+      if(!a||!b) return;
+      S.combos[cfg.key].push([a,b]);
+      i1.value=''; i2.value='';
+      scheduleSave(); renderCombos(); renderPlan();
+    };
+    addRow.appendChild(i1); addRow.appendChild(i2); addRow.appendChild(ok);
+    body.appendChild(addRow);
+    card.appendChild(body);
+    el.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════
+// AMOUNTS
+// ═══════════════════════════════════════════
+const AMT_CATS = [{key:'carb',label:'탄수화물'},{key:'protein',label:'단백질'},{key:'veg',label:'채소'},{key:'fruit',label:'과일'},{key:'snack',label:'간식'}];
+const MONTHS = [4,5,6,7,8,9,10,11,12];
+
+function renderAmounts(){
+  const t = document.getElementById('amtTable');
+  let h = '<thead><tr><th>구분</th>';
+  MONTHS.forEach(m=>h+=`<th>${m}개월</th>`);
+  h+='</tr></thead><tbody>';
+  AMT_CATS.forEach(cat=>{
+    h+=`<tr><td style="font-weight:700;color:var(--brown);padding:6px 8px">${cat.label}</td>`;
+    MONTHS.forEach(m=>{
+      const v = S.amounts[m]?.[cat.key]??0;
+      h+=`<td><input class="amt-inp" type="number" value="${v}" min="0" max="500"
+        onchange="S.amounts[${m}]['${cat.key}']=parseInt(this.value)||0;scheduleSave();renderPlan()"></td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  t.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+document.getElementById('globalMonth').value = S.month;
+document.getElementById('hdrMonth').textContent = S.month+'개월';
+checkAutoArchive();
+renderPlan();
+</script>
+</body>
+</html>
